@@ -27,7 +27,7 @@ class ApiFetcher {
 
   bool get isAuthenticated => _auth != null;
 
-  ApiFetcher();
+  ApiFetcher({Auth auth}) : _auth = auth;
 
   Future _checkAuth() async {
     if (!isAuthenticated) {
