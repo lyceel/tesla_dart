@@ -25,6 +25,7 @@ state of charge.
 
 The following arguments are available:
 
+|-----------------|------------------------------------|
 |  --show-options |  Show vehicle options and features |
 |  --show-charge  |  Show state of charge (default)    |
 |  --show-climate |  Show climate control settings     |
