@@ -3,3 +3,7 @@
 
 # Skip the pubspec.lock file as well
 pubspec.lock
+
+# Skip credential files
+.config
+.tesla_auth

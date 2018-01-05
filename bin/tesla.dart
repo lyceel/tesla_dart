@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 
-import 'package:tesla_coil/src/api_fetcher.dart';
-import 'package:tesla_coil/vehicle.dart';
+import 'package:tesla_dart/src/api_fetcher.dart';
+import 'package:tesla_dart/vehicle.dart';
 
 Future main(List<String> args) async {
   var argParser = new ArgParser()
