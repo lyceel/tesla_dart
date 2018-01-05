@@ -1,0 +1,8 @@
+name: tesla_dart
+version: 0.1.0
+description: Proxy for accessing the Tesla Owners API.
+author: Jason Daly <lyceel@gmail.com>
+dependencies:
+    ansicolor: any
+    args: any
+    http: any
