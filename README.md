@@ -25,13 +25,13 @@ state of charge.
 
 The following arguments are available:
 
-  --show-options   Show vehicle options and features
-  --show-charge    Show state of charge (default)
-  --show-climate   Show climate control settings
-  --show-drive     Show drive information
-  --show-gui       Show GUI settings
-  --show-vehicle   Show vehicle state
-  --show-all       Show all of the above
-
-  --raw            Show raw data returned from server
+|  --show-options |  Show vehicle options and features |
+|  --show-charge  |  Show state of charge (default)    |
+|  --show-climate |  Show climate control settings     |
+|  --show-drive   |  Show drive information            |
+|  --show-gui     |  Show GUI settings                 |
+|  --show-vehicle |  Show vehicle state                |
+|  --show-all     |  Show all of the above             |
+|                 |                                    |
+|  --raw          | Show raw data returned from server |
 
