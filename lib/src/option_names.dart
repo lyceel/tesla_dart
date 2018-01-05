@@ -276,7 +276,7 @@ const optionDecoder = const <String, Map<String, String>>{
     "category": "C_OPTS"
   },
   "TR00": const {"name": "No Third Row Seat", "category": "C_OPTS"},
-  "TR01": const {"name": "Rear Facing Seats", "category": "C_OPTS"},
+  "TR01": const {"name": "Third Row Seating", "category": "C_OPTS"},
   "TRA1": const {"name": "Third Row HVAC", "category": "C_OPTS"},
   "TW01": const {"name": "Towing Package", "category": "C_OPTS"},
   "UM01": const {
