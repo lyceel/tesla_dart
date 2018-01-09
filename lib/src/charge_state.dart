@@ -91,10 +91,10 @@ class ChargeState {
     var batteryEnergy = (batteryLevel * batterySize) / 100.0;
     buffer.writeln("  Battery:         $batteryEnergy/$batterySize.0 kWh "
         "($batteryLevel%)");
-    var battLines = renderBattery(batteryLevel);
-    buffer.writeln("                   ${battLines[0]}");
-    buffer.writeln("                   ${battLines[1]}");
-    buffer.writeln("                   ${battLines[2]}");
+    var lines = renderBattery(batteryLevel);
+    for (var line in lines) {
+      buffer.writeln("                   $line");
+    }
     buffer.writeln("  Range:           $batteryRange miles");
     var charging = chargingState == "Charging";
     buffer.write("  Charge state:    ");

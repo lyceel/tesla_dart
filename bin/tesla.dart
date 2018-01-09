@@ -76,15 +76,27 @@ Future main(List<String> args) async {
     await car.updateDriveState();
     print("Drive State:");
     print("${car.driveState}");
+    if (raw) {
+      print("\n  raw: "
+          "${car.driveState.toJson().toString().replaceAll(", ", "\n    ")}");
+    }
   }
 
   if (showGui) {
     await car.updateGuiSettings();
     print("${car.guiSettings}");
+    if (raw) {
+      print("\n  raw: "
+          "${car.guiSettings.toJson().toString().replaceAll(", ", "\n    ")}");
+    }
   }
 
   if (showVehicle) {
     await car.updateVehicleState();
     print("${car.vehicleState}");
+    if (raw) {
+      print("\n  raw: "
+          "${car.vehicleState.toJson().toString().replaceAll(", ", "\n    ")}");
+    }
   }
 }
