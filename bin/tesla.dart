@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 
 import 'package:tesla_dart/src/api_fetcher.dart';
+import 'package:tesla_dart/src/auth.dart';
 import 'package:tesla_dart/vehicle.dart';
 
 Future main(List<String> args) async {
@@ -15,7 +16,8 @@ Future main(List<String> args) async {
     ..addFlag('show-drive', defaultsTo: false)
     ..addFlag('show-gui', defaultsTo: false)
     ..addFlag('show-vehicle', defaultsTo: false)
-    ..addFlag('show-all', defaultsTo: false);
+    ..addFlag('show-all', defaultsTo: false)
+    ..addOption('access-token', abbr: 'a');
 
   var results = argParser.parse(args);
   var raw = results['raw'];
@@ -34,7 +36,10 @@ Future main(List<String> args) async {
     showVehicle = true;
   }
 
-  var fetcher = new ApiFetcher();
+  var fetcher = new ApiFetcher(
+      auth: results.wasParsed('access-token')
+          ? new Auth({'access_token': results['access-token']})
+          : null);
 
   var vehicles = await Vehicle.getVehicles(fetcher);
   var car = vehicles.first;

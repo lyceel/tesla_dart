@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'src/api_fetcher.dart';
 import 'src/option_names.dart';
@@ -34,11 +35,28 @@ class Vehicle {
     var response = await fetcher.fetchList(ApiFetcher.vehiclesUrl);
     var result = <Vehicle>[];
     if (response != null) {
+      var rand = new Random();
+      Future<bool> _fetchMobileFor(String id) async {
+        try {
+          var mobileEnabled = await fetcher
+              .fetchBoolean('${ApiFetcher.vehiclesUrl}/$id/'
+                  '${ApiFetcher.mobileEnabledPath}');
+          return mobileEnabled;
+        } catch (e) {
+          if (e is int && e == 408) {
+            var time = rand.nextDouble() * 5000;
+            var delay = new Duration(milliseconds: time.toInt());
+            print("Timeout error fetching mobile-enabled; retry in $delay");
+            await new Future.delayed(delay);
+            return _fetchMobileFor(id);
+          }
+          rethrow;
+        }
+      }
+
       for (var vehicle in response) {
         var summary = new VehicleSummary(vehicle);
-        var mobileEnabled = await fetcher
-            .fetchBoolean('${ApiFetcher.vehiclesUrl}/${summary.id}/'
-                '${ApiFetcher.mobileEnabledPath}');
+        var mobileEnabled = await _fetchMobileFor(summary.id);
         result.add(new Vehicle._(summary, fetcher, mobileEnabled));
       }
     }

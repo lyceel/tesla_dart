@@ -27,7 +27,7 @@ class ApiFetcher {
 
   bool get isAuthenticated => _auth != null;
 
-  ApiFetcher();
+  ApiFetcher({Auth auth}) : _auth = auth;
 
   Future _checkAuth() async {
     if (!isAuthenticated) {
@@ -53,6 +53,7 @@ class ApiFetcher {
       await _refreshAuth();
       return _get(url);
     }
+    if (response.statusCode == 408) throw 408;
     if (response.statusCode != 200) {
       throw new StateError("Error during fetch: "
           "(${response.statusCode}) ${response.reasonPhrase}");
