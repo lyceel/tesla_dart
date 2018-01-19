@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 
-import 'package:tesla_dart/src/api_fetcher.dart';
-import 'package:tesla_dart/src/auth.dart';
-import 'package:tesla_dart/vehicle.dart';
+import 'package:tesla/src/api_fetcher.dart';
+import 'package:tesla/src/auth.dart';
+import 'package:tesla/vehicle.dart';
 
 Future main(List<String> args) async {
   var argParser = new ArgParser()

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:tesla_dart/src/auth.dart';
+import 'package:tesla/src/auth.dart';
 
 Future main() async {
   var creds;
