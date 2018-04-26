@@ -1,4 +1,5 @@
 import 'package:ansicolor/ansicolor.dart';
+import 'package:intl/intl.dart';
 
 class ChargeState {
   final Map<String, dynamic> _json;
@@ -79,8 +80,8 @@ class ChargeState {
 
     var middle = left +
         pen((fullBlock * fullBlocks) +
-        (fullBlocks < 10 ? partialBlocks[partialBlockIndex] : '') +
-        (fullBlocks < 10 ? ' ' * (10 - fullBlocks - 1) : '')) +
+            (fullBlocks < 10 ? partialBlocks[partialBlockIndex] : '') +
+            (fullBlocks < 10 ? ' ' * (10 - fullBlocks - 1) : '')) +
         right;
 
     return [top, middle, bottom];
@@ -119,7 +120,15 @@ class ChargeState {
     if (chargingState == 'Charging') {
       var hours = timeToFullCharge.toInt();
       var minutes = ((timeToFullCharge - hours) * 60).toInt();
-      buffer.writeln("    Remaining:     ${hours}h ${minutes}m");
+      buffer.write("    Remaining:     ${hours}h ${minutes}m");
+      if (hours < 24) {
+        var done = new DateTime.now()
+            .add(new Duration(hours: hours, minutes: minutes));
+        var format = new DateFormat.jm();
+        buffer.writeln("  (at ${format.format(done)})");
+      } else {
+        buffer.writeln("");
+      }
     }
     return buffer.toString();
   }

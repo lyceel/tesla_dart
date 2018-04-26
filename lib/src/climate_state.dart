@@ -42,10 +42,10 @@ class ClimateState {
     if (fanStatus != null) {
       buffer.writeln("    Fan:                     ${fanStatus}");
     }
-    if (driverTempSetting) {
+    if (driverTempSetting != null) {
       buffer.writeln("    Driver:                  ${driverTempSetting}");
     }
-    if (passengerTempSetting) {
+    if (passengerTempSetting != null) {
       buffer.writeln("    Passenger:               ${passengerTempSetting}");
     }
     buffer.writeln("  Defrost:");
@@ -54,11 +54,12 @@ class ClimateState {
     buffer.writeln("    Rear:                    "
         "${isRearDefrosterOn ? "On" : "Off"}");
 
-    const heaterLevel = const <int, String>{
+    const heaterLevel = const <dynamic, String>{
       0: "Off",
       1: "Low",
       2: "Medium",
       3: "High",
+      false: "Not installed",
     };
     buffer.writeln("  Seat Heaters:");
     buffer.writeln("    Front Left:              "

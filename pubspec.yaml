@@ -6,3 +6,4 @@ dependencies:
     ansicolor: any
     args: any
     http: any
+    intl: any

@@ -9,6 +9,7 @@ class DriveState {
   double get longitude => _json['longitude'];
   int get heading => _json['heading'];
   int get gpsAsOf => _json['gps_as_of'];
+  int get power => _json['power'];
 
   String get compassDirection {
     const interval = 22.5;
@@ -53,7 +54,8 @@ class DriveState {
               .fromMillisecondsSinceEpoch(gpsAsOf * 1000, isUtc: true)
               .toLocal()})\n"
       "  Heading:     $heading ($compassDirection)\n"
-      "  Speed:       ${speed == null ? 0 : speed}\n";
+      "  Speed:       ${speed == null ? 0 : speed}\n"
+      "  Power:       $power kWh\n";
 
   toJson() => _json;
 }
