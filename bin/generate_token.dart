@@ -22,5 +22,5 @@ Future main() async {
   }
 
   // Cache the token.
-  await auth.writeToCache(new File('.tesla_auth'));
+  await auth.writeToCache();
 }

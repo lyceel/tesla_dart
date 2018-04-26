@@ -121,7 +121,7 @@ class ApiFetcher {
   }
 
   Future _authenticate() async {
-    var auth = await Auth.createFromCache(new File('.tesla_auth'));
+    var auth = await Auth.createFromCache();
     if (auth != null) {
       _auth = auth;
       return;
