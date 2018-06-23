@@ -36,7 +36,7 @@ class Vehicle {
     var result = <Vehicle>[];
     if (response != null) {
       var rand = new Random();
-      Future<bool> _fetchMobileFor(String id) async {
+      Future<bool> _fetchMobileFor(int id) async {
         try {
           var mobileEnabled = await fetcher
               .fetchBoolean('${ApiFetcher.vehiclesUrl}/$id/'
@@ -115,8 +115,8 @@ class VehicleSummary {
     _decodeBatterySize();
   }
 
-  String get id => _json['id'];
-  String get vehicleId => _json['vehicle_id'];
+  int get id => _json['id'];
+  int get vehicleId => _json['vehicle_id'];
   String get vin => _json['vin'];
   String get displayName => _json['display_name'];
   String get optionCodes => _json['option_codes'];

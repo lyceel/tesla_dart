@@ -86,47 +86,50 @@ Future main(List<String> args) async {
   if (showCharge) {
     await car.updateChargeState();
     print("Charge State:");
-    print("${car.chargeState}");
     if (raw) {
       print("\n  raw: "
           "${car.chargeState.toJson().toString().replaceAll(", ", "\n    ")}");
     }
+    print("${car.chargeState}");
   }
 
   if (showClimate) {
     await car.updateClimateState();
-    print("${car.climateState}");
+    print("Climate State:");
     if (raw) {
       print("raw: "
           "${car.climateState.toJson().toString().replaceAll(", ", "\n    ")}");
     }
+    print("${car.climateState}");
   }
 
   if (showDrive) {
     await car.updateDriveState();
     print("Drive State:");
-    print("${car.driveState}");
     if (raw) {
       print("\n  raw: "
           "${car.driveState.toJson().toString().replaceAll(", ", "\n    ")}");
     }
+    print("${car.driveState}");
   }
 
   if (showGui) {
     await car.updateGuiSettings();
-    print("${car.guiSettings}");
+    print("GUI Settings:");
     if (raw) {
       print("\n  raw: "
           "${car.guiSettings.toJson().toString().replaceAll(", ", "\n    ")}");
     }
+    print("${car.guiSettings}");
   }
 
   if (showVehicle) {
     await car.updateVehicleState();
-    print("${car.vehicleState}");
+    print("Vehicle State:");
     if (raw) {
       print("\n  raw: "
           "${car.vehicleState.toJson().toString().replaceAll(", ", "\n    ")}");
     }
+    print("${car.vehicleState}");
   }
 }

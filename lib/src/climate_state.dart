@@ -7,17 +7,17 @@ class ClimateState {
   double get outsideTemp => _cToF(_json['outside_temp']);
   double get driverTempSetting => _cToF(_json['driver_temp_setting']);
   double get passengerTempSetting => _cToF(_json['passenger_temp_setting']);
-  bool get isAutoConditioningOn => _json['is_auto_conditioning_on'];
+  bool get isAutoConditioningOn => _json['is_auto_conditioning_on'] ?? false;
   bool get isFrontDefrosterOn => _json['is_front_defroster_on'];
   bool get isRearDefrosterOn => _json['is_rear_defroster_on'];
   int get fanStatus => _json['fan_status'];
   double get minAvailTemp => _cToF(_json['min_avail_temp']);
   double get maxAvailTemp => _cToF(_json['max_avail_temp']);
-  int get seatHeaterLeft => _json['seat_heater_left'];
-  int get seatHeaterRight => _json['seat_heater_right'];
-  int get seatHeaterRearLeft => _json['seat_heater_rear_left'];
-  int get seatHeaterRearCenter => _json['seat_heater_rear_center'];
-  int get seatHeaterRearRight => _json['seat_heater_rear_right'];
+  bool get seatHeaterLeft => _json['seat_heater_left'];
+  bool get seatHeaterRight => _json['seat_heater_right'];
+  bool get seatHeaterRearLeft => _json['seat_heater_rear_left'];
+  bool get seatHeaterRearCenter => _json['seat_heater_rear_center'];
+  bool get seatHeaterRearRight => _json['seat_heater_rear_right'];
   int get seatHeaterRearLeftBack => _json['seat_heater_rear_left_back'];
   int get seatHeaterRearRightBack => _json['seat_heater_rear_right_back'];
   bool get smartPreconditioning => _json['smart_preconditioning'];
@@ -35,10 +35,8 @@ class ClimateState {
       buffer.writeln("  Exterior Temp:             ${outsideTemp}");
     }
     buffer.writeln("  Climate Settings:");
-    if (isAutoConditioningOn) {
-      buffer.writeln("    Mode:                    "
-          "${isAutoConditioningOn ? "Auto" : "Manual"}");
-    }
+    buffer.writeln("    Mode:                    "
+        "${isAutoConditioningOn ? "Auto" : "Manual"}");
     if (fanStatus != null) {
       buffer.writeln("    Fan:                     ${fanStatus}");
     }

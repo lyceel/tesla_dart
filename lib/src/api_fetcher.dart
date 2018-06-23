@@ -74,11 +74,12 @@ class ApiFetcher {
     return <String, dynamic>{};
   }
 
-  Future<List<Map<String, dynamic>>> fetchList(String url) async {
+  Future<List> fetchList(String url) async {
     var body = await _get(url);
     if (body != null && body.isNotEmpty) {
       var responseData = JSON.decode(body);
       if (responseData is Map && responseData['response'] is List) {
+
         return responseData['response'];
       }
     }
