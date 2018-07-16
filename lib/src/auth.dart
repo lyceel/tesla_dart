@@ -47,13 +47,13 @@ class Auth {
       return null;
     }
 
-    var json = JSON.decode(cache);
-    if (json == null || json.isEmpty) {
+    var jsonData = json.decode(cache);
+    if (jsonData == null || jsonData.isEmpty) {
       print("Authentication cache empty or corrupt.");
       return null;
     }
 
-    var auth = new Auth(json);
+    var auth = new Auth(jsonData);
 
     // Validate the credentials, and return null if any are invalid.
     if (auth.accessToken == null ||
@@ -94,7 +94,7 @@ class Auth {
     var body = response.body;
     var auth;
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
         auth = new Auth(responseData);
       }
@@ -125,7 +125,7 @@ class Auth {
       return null;
     }
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
         // Update with the refreshed credentials.
         _json = responseData;
@@ -140,6 +140,6 @@ class Auth {
 
   Future writeToCache([File cacheFile]) async {
     cacheFile ??= new File(cacheFilename);
-    return cacheFile.writeAsString(JSON.encode(_json));
+    return cacheFile.writeAsString(json.encode(_json));
   }
 }

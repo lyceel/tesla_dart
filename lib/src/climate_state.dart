@@ -13,13 +13,13 @@ class ClimateState {
   int get fanStatus => _json['fan_status'];
   double get minAvailTemp => _cToF(_json['min_avail_temp']);
   double get maxAvailTemp => _cToF(_json['max_avail_temp']);
-  int get seatHeaterLeft => _json['seat_heater_left'];
-  int get seatHeaterRight => _json['seat_heater_right'];
-  int get seatHeaterRearLeft => _json['seat_heater_rear_left'];
-  int get seatHeaterRearCenter => _json['seat_heater_rear_center'];
-  int get seatHeaterRearRight => _json['seat_heater_rear_right'];
-  int get seatHeaterRearLeftBack => _json['seat_heater_rear_left_back'];
-  int get seatHeaterRearRightBack => _json['seat_heater_rear_right_back'];
+  dynamic get seatHeaterLeft => _json['seat_heater_left'];
+  dynamic get seatHeaterRight => _json['seat_heater_right'];
+  dynamic get seatHeaterRearLeft => _json['seat_heater_rear_left'];
+  dynamic get seatHeaterRearCenter => _json['seat_heater_rear_center'];
+  dynamic get seatHeaterRearRight => _json['seat_heater_rear_right'];
+  dynamic get seatHeaterRearLeftBack => _json['seat_heater_rear_left_back'];
+  dynamic get seatHeaterRearRightBack => _json['seat_heater_rear_right_back'];
   bool get smartPreconditioning => _json['smart_preconditioning'];
 
   double _cToF(double celsius) =>
@@ -59,7 +59,8 @@ class ClimateState {
       1: "Low",
       2: "Medium",
       3: "High",
-      false: "Not installed",
+      false: "Off",
+      true: "On",
     };
     buffer.writeln("  Seat Heaters:");
     buffer.writeln("    Front Left:              "

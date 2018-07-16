@@ -67,7 +67,7 @@ class ApiFetcher {
 
   Future<Map<String, dynamic>> fetch(String url) async {
     var body = await _get(url);
-    var responseData = JSON.decode(body);
+    var responseData = json.decode(body);
     if (responseData is Map && responseData['response'] is Map) {
       return responseData['response'];
     }
@@ -77,9 +77,9 @@ class ApiFetcher {
   Future<List<Map<String, dynamic>>> fetchList(String url) async {
     var body = await _get(url);
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData['response'] is List) {
-        return responseData['response'];
+        return responseData['response'].cast<Map<String, dynamic>>();
       }
     }
     return <Map<String, dynamic>>[];
@@ -88,7 +88,7 @@ class ApiFetcher {
   Future<bool> fetchBoolean(String url) async {
     var body = await _get(url);
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData['response'] != null) {
         return responseData['response'];
       }
@@ -110,7 +110,7 @@ class ApiFetcher {
     }
     var body = response.body;
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map &&
           responseData['response'] != null &&
           responseData['response']['result'] != null) {

@@ -10,21 +10,21 @@ class VehicleState {
   bool get calendarSupported => _json['calendar_supported'];
   String get carVersion => _json['car_version'];
   int get centerDisplayState => _json['center_display_state'];
-  bool get driverFrontDoorOpen => _json['df'];
-  bool get driverRearDoorOpen => _json['dr'];
-  bool get frontTrunkOpen => _json['ft'];
+  int get driverFrontDoorOpen => _json['df'];
+  int get driverRearDoorOpen => _json['dr'];
+  int get frontTrunkOpen => _json['ft'];
   bool get homelinkNearby => _json['homelink_nearby'];
   String get lastAutoparkError => _json['last_autopark_error'];
   bool get locked => _json['locked'];
   bool get notificationsSupported => _json['notifications_supported'];
   double get odometer => _json['odometer'];
   bool get parsedCalendarSupported => _json['parsed_calendar_supported'];
-  bool get passengerFrontDoorOpen => _json['pf'];
-  bool get passengerRearDoorOpen => _json['pr'];
+  int get passengerFrontDoorOpen => _json['pf'];
+  int get passengerRearDoorOpen => _json['pr'];
   bool get remoteStartActive => _json['remote_start'];
   bool get remoteStartSupported => _json['remote_start_supported'];
-  bool get rearTrunkOpen => _json['rt'];
-  bool get sunroofPercentOpen => _json['sun_roof_percent_open'];
+  int get rearTrunkOpen => _json['rt'];
+  int get sunroofPercentOpen => _json['sun_roof_percent_open'];
   String get sunroofState => _json['sun_roof_state'];
   int get timestamp => _json['timestamp'];
   bool get valetMode => _json['valet_mode'];
@@ -39,14 +39,16 @@ class VehicleState {
       "  Odometer:                 $odometer\n"
       "  Locked:                   ${locked ? "Yes" : "No"}\n"
       "  Doors:\n"
-      "    Driver Front:           ${driverFrontDoorOpen ? "Open" : "Closed"}\n"
-      "    Driver Rear:            ${driverRearDoorOpen ? "Open" : "Closed"}\n"
+      "    Driver Front:           "
+      "${driverFrontDoorOpen == 1 ? "Open" : "Closed"}\n"
+      "    Driver Rear:            "
+      "${driverRearDoorOpen == 1 ? "Open" : "Closed"}\n"
       "    Passenger Front:        "
-      "${passengerFrontDoorOpen ? "Open" : "Closed"}\n"
+      "${passengerFrontDoorOpen == 1 ? "Open" : "Closed"}\n"
       "    Passenger Rear:         "
-      "${passengerRearDoorOpen ? "Open" : "Closed"}\n"
-      "    Front Trunk:            ${frontTrunkOpen ? "Open" : "Closed"}\n"
-      "    Rear Trunk:             ${rearTrunkOpen ? "Open" : "Closed"}\n"
+      "${passengerRearDoorOpen == 1 ? "Open" : "Closed"}\n"
+      "    Front Trunk:            ${frontTrunkOpen == 1 ? "Open" : "Closed"}\n"
+      "    Rear Trunk:             ${rearTrunkOpen == 1 ? "Open" : "Closed"}\n"
       "  Sunroof:\n"
       "    State:                  $sunroofState\n"
       "    Percent Open:           $sunroofPercentOpen\n"
@@ -68,8 +70,7 @@ class VehicleState {
       "    Active:                 $valetMode\n"
       "    PIN Needed:             $valetPinNeeded\n"
       "  Timestamp:                "
-      "${new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
-              .toLocal()}\n";
+      "${new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal()}\n";
 
   toJson() => _json;
 }

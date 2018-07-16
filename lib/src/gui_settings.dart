@@ -6,9 +6,9 @@ class GuiSettings {
   String get distanceUnits => _json['gui_distance_units'];
   String get temperatureUnits => _json['gui_temperature_units'];
   String get chargeRateUnits => _json['gui_charge_rate_units'];
-  String get twentyFourHourTime => _json['gui_24_hour_time'];
+  bool get twentyFourHourTime => _json['gui_24_hour_time'];
   String get rangeDisplay => _json['gui_range_display'];
-  String get timestamp => _json['timestamp'];
+  int get timestamp => _json['timestamp'];
 
   String toString() => "GUI Settings:\n"
       "  Units:\n"
@@ -19,8 +19,7 @@ class GuiSettings {
       "  Time Display:     ${twentyFourHourTime ? "24-hour" : "12-hour"}\n"
       "  Range Display:    $rangeDisplay\n"
       "  Timestamp:        "
-      "${new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
-            .toLocal()}\n";
+      "${new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal()}\n";
 
   toJson() => _json;
 }
