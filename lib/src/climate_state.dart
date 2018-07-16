@@ -7,7 +7,7 @@ class ClimateState {
   double get outsideTemp => _cToF(_json['outside_temp']);
   double get driverTempSetting => _cToF(_json['driver_temp_setting']);
   double get passengerTempSetting => _cToF(_json['passenger_temp_setting']);
-  bool get isAutoConditioningOn => _json['is_auto_conditioning_on'];
+  bool get isAutoConditioningOn => _json['is_auto_conditioning_on'] ?? false;
   bool get isFrontDefrosterOn => _json['is_front_defroster_on'];
   bool get isRearDefrosterOn => _json['is_rear_defroster_on'];
   int get fanStatus => _json['fan_status'];
@@ -35,10 +35,8 @@ class ClimateState {
       buffer.writeln("  Exterior Temp:             ${outsideTemp}");
     }
     buffer.writeln("  Climate Settings:");
-    if (isAutoConditioningOn) {
-      buffer.writeln("    Mode:                    "
-          "${isAutoConditioningOn ? "Auto" : "Manual"}");
-    }
+    buffer.writeln("    Mode:                    "
+        "${isAutoConditioningOn ? "Auto" : "Manual"}");
     if (fanStatus != null) {
       buffer.writeln("    Fan:                     ${fanStatus}");
     }
@@ -54,6 +52,8 @@ class ClimateState {
     buffer.writeln("    Rear:                    "
         "${isRearDefrosterOn ? "On" : "Off"}");
 
+    // The type returned by the API is a bit schizophrenic. Need to handle
+    // both int and bool, apparently.
     const heaterLevel = const <dynamic, String>{
       0: "Off",
       1: "Low",
@@ -62,6 +62,7 @@ class ClimateState {
       false: "Off",
       true: "On",
     };
+
     buffer.writeln("  Seat Heaters:");
     buffer.writeln("    Front Left:              "
         "${heaterLevel[seatHeaterLeft]}");

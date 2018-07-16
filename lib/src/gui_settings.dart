@@ -18,8 +18,12 @@ class GuiSettings {
       "    Charge Rate:    $chargeRateUnits\n"
       "  Time Display:     ${twentyFourHourTime ? "24-hour" : "12-hour"}\n"
       "  Range Display:    $rangeDisplay\n"
-      "  Timestamp:        "
-      "${new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal()}\n";
+      "  Timestamp:        ${_renderTimestamp(timestamp)}\n";
 
   toJson() => _json;
+
+  String _renderTimestamp(int timestamp) =>
+      new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
+          .toLocal()
+          .toString();
 }

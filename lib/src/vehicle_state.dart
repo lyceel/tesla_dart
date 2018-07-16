@@ -10,20 +10,20 @@ class VehicleState {
   bool get calendarSupported => _json['calendar_supported'];
   String get carVersion => _json['car_version'];
   int get centerDisplayState => _json['center_display_state'];
-  int get driverFrontDoorOpen => _json['df'];
-  int get driverRearDoorOpen => _json['dr'];
-  int get frontTrunkOpen => _json['ft'];
+  bool get driverFrontDoorOpen => (_json['df'] ?? 0) == 1;
+  bool get driverRearDoorOpen => (_json['dr'] ?? 0) == 1;
+  bool get frontTrunkOpen => (_json['ft'] ?? 0) == 1;
   bool get homelinkNearby => _json['homelink_nearby'];
   String get lastAutoparkError => _json['last_autopark_error'];
   bool get locked => _json['locked'];
   bool get notificationsSupported => _json['notifications_supported'];
   double get odometer => _json['odometer'];
   bool get parsedCalendarSupported => _json['parsed_calendar_supported'];
-  int get passengerFrontDoorOpen => _json['pf'];
-  int get passengerRearDoorOpen => _json['pr'];
+  bool get passengerFrontDoorOpen => (_json['pf'] ?? 0) == 1;
+  bool get passengerRearDoorOpen => (_json['pr'] ?? 0) == 1;
   bool get remoteStartActive => _json['remote_start'];
   bool get remoteStartSupported => _json['remote_start_supported'];
-  int get rearTrunkOpen => _json['rt'];
+  bool get rearTrunkOpen => (_json['rt'] ?? 0) == 1;
   int get sunroofPercentOpen => _json['sun_roof_percent_open'];
   String get sunroofState => _json['sun_roof_state'];
   int get timestamp => _json['timestamp'];
@@ -69,8 +69,12 @@ class VehicleState {
       "  Valet Mode:\n"
       "    Active:                 $valetMode\n"
       "    PIN Needed:             $valetPinNeeded\n"
-      "  Timestamp:                "
-      "${new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal()}\n";
+      "  Timestamp:                ${_renderTimestamp(timestamp)}\n";
 
   toJson() => _json;
+
+  String _renderTimestamp(int timestamp) =>
+      new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
+          .toLocal()
+          .toString();
 }
