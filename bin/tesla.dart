@@ -9,7 +9,7 @@ import 'package:tesla/src/auth.dart';
 import 'package:tesla/vehicle.dart';
 
 Future main(List<String> args) async {
-  var argParser = new ArgParser()
+  var argParser = ArgParser()
     ..addFlag('raw', defaultsTo: false, help: 'dumps raw information')
     ..addFlag('show-options',
         abbr: 'o',
@@ -61,9 +61,9 @@ Future main(List<String> args) async {
     showVehicle = true;
   }
 
-  var fetcher = new ApiFetcher(
+  var fetcher = ApiFetcher(
       auth: results.wasParsed('access-token')
-          ? new Auth({'access_token': results['access-token']})
+          ? Auth({'access_token': results['access-token']})
           : null);
 
   var vehicles = await Vehicle.getVehicles(fetcher);

@@ -26,7 +26,7 @@ class ClimateState {
       celsius == null ? null : celsius * 9.0 / 5.0 + 32.0;
 
   String toString() {
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
     buffer.writeln("Climate State:");
     if (insideTemp != null) {
       buffer.writeln("  Interior Temp:             ${insideTemp}");
@@ -54,7 +54,7 @@ class ClimateState {
 
     // The type returned by the API is a bit schizophrenic. Need to handle
     // both int and bool, apparently.
-    const heaterLevel = const <dynamic, String>{
+    const heaterLevel = <dynamic, String>{
       0: "Off",
       1: "Low",
       2: "Medium",

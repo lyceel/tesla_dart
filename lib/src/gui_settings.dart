@@ -23,7 +23,7 @@ class GuiSettings {
   toJson() => _json;
 
   String _renderTimestamp(int timestamp) =>
-      new DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
+      DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
           .toLocal()
           .toString();
 }

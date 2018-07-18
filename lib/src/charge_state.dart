@@ -53,23 +53,12 @@ class ChargeState {
     const right = '▐';
     const bottom = '╰──────────╯';
     const fullBlock = '█';
-    const partialBlocks = const [
-      ' ',
-      '▏',
-      '▎',
-      '▍',
-      '▍',
-      '▌',
-      '▋',
-      '▊',
-      '▊',
-      '▉'
-    ];
+    const partialBlocks = [' ', '▏', '▎', '▍', '▍', '▌', '▋', '▊', '▊', '▉'];
 
     var fullBlocks = level ~/ 10;
     var partialBlockIndex = level % 10;
 
-    var pen = new AnsiPen();
+    var pen = AnsiPen();
     if (level < 10) {
       pen.red();
     } else if (level < 25) {
@@ -88,7 +77,7 @@ class ChargeState {
   }
 
   String toString() {
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
     var batteryEnergy = (batteryLevel * batterySize) / 100.0;
     buffer.writeln("  Battery:         $batteryEnergy/$batterySize.0 kWh "
         "($batteryLevel%)");
@@ -122,9 +111,8 @@ class ChargeState {
       var minutes = ((timeToFullCharge - hours) * 60).toInt();
       buffer.write("    Remaining:     ${hours}h ${minutes}m");
       if (hours < 24) {
-        var done = new DateTime.now()
-            .add(new Duration(hours: hours, minutes: minutes));
-        var format = new DateFormat.jm();
+        var done = DateTime.now().add(Duration(hours: hours, minutes: minutes));
+        var format = DateFormat.jm();
         buffer.writeln("  (at ${format.format(done)})");
       } else {
         buffer.writeln("");

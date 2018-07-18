@@ -33,7 +33,7 @@ class ApiFetcher {
     if (!isAuthenticated) {
       await _authenticate();
       if (!isAuthenticated) {
-        throw new StateError("Failed to load authentication credentials!");
+        throw StateError("Failed to load authentication credentials!");
       }
     }
   }
@@ -41,7 +41,7 @@ class ApiFetcher {
   Future _refreshAuth() async {
     _auth = await _auth.refresh();
     if (_auth == null) {
-      throw new StateError("Failed to refresh authentication credentials!");
+      throw StateError("Failed to refresh authentication credentials!");
     }
   }
 
@@ -55,7 +55,7 @@ class ApiFetcher {
     }
     if (response.statusCode == 408) throw 408;
     if (response.statusCode != 200) {
-      throw new StateError("Error during fetch: "
+      throw StateError("Error during fetch: "
           "(${response.statusCode}) ${response.reasonPhrase}");
     }
     var body = response.body;
@@ -105,7 +105,7 @@ class ApiFetcher {
       return post(url);
     }
     if (response.statusCode != 200) {
-      throw new StateError("Error during post: "
+      throw StateError("Error during post: "
           "(${response.statusCode}) ${response.reasonPhrase}");
     }
     var body = response.body;

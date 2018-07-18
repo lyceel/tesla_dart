@@ -23,19 +23,19 @@ class Auth {
   String get refreshToken => _json['refresh_token'];
 
   DateTime get created => _json.containsKey('created_at')
-      ? new DateTime.fromMillisecondsSinceEpoch(_json['created_at'])
+      ? DateTime.fromMillisecondsSinceEpoch(_json['created_at'])
       : null;
 
   DateTime get expires =>
       _json.containsKey('created_at') && _json.containsKey('expires_in')
-          ? new DateTime.fromMillisecondsSinceEpoch(
+          ? DateTime.fromMillisecondsSinceEpoch(
               (_json['created_at'] + _json['expires_in']) * 1000)
           : null;
 
-  bool get isExpired => new DateTime.now().isAfter(expires);
+  bool get isExpired => DateTime.now().isAfter(expires);
 
   static Future<Auth> createFromCache([File cacheFile]) async {
-    cacheFile ??= new File(cacheFilename);
+    cacheFile ??= File(cacheFilename);
     if (!await cacheFile.exists()) {
       print("Authentication cache missing.");
       return null;
@@ -53,7 +53,7 @@ class Auth {
       return null;
     }
 
-    var auth = new Auth(jsonData);
+    var auth = Auth(jsonData);
 
     // Validate the credentials, and return null if any are invalid.
     if (auth.accessToken == null ||
@@ -67,7 +67,7 @@ class Auth {
     // Check for imminent expiration.
     print("Token expires at: ${auth.expires}");
     var fiveMinutes = const Duration(minutes: 5);
-    var checkTime = new DateTime.now().add(fiveMinutes);
+    var checkTime = DateTime.now().add(fiveMinutes);
     if (checkTime.isAfter(auth.expires)) {
       var refreshed = await auth.refresh();
       if (refreshed != null) {
@@ -96,7 +96,7 @@ class Auth {
     if (body != null && body.isNotEmpty) {
       var responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
-        auth = new Auth(responseData);
+        auth = Auth(responseData);
       }
     }
 
@@ -139,7 +139,7 @@ class Auth {
   }
 
   Future writeToCache([File cacheFile]) async {
-    cacheFile ??= new File(cacheFilename);
+    cacheFile ??= File(cacheFilename);
     return cacheFile.writeAsString(json.encode(_json));
   }
 }
