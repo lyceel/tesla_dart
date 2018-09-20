@@ -4,7 +4,7 @@ class DriveState {
   DriveState(this._json);
 
   String get shiftState => _json['shift_state'];
-  double get speed => _json['speed'];
+  int get speed => _json['speed'];
   double get latitude => _json['latitude'];
   double get longitude => _json['longitude'];
   int get heading => _json['heading'];
@@ -53,7 +53,7 @@ class DriveState {
       "${_renderTimestamp(gpsAsOf * 1000)})\n"
       "  Heading:     $heading ($compassDirection)\n"
       "  Speed:       ${speed == null ? 0 : speed}\n"
-      "  Power:       $power kWh\n";
+      "  Power:       $power kW\n";
 
   String _renderTimestamp(int timestamp) =>
       DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
