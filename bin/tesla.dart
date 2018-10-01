@@ -8,6 +8,14 @@ import 'package:tesla/src/api_fetcher.dart';
 import 'package:tesla/src/auth.dart';
 import 'package:tesla/vehicle.dart';
 
+bool raw;
+bool showOptions;
+bool showCharge;
+bool showClimate;
+bool showDrive;
+bool showGui;
+bool showVehicle;
+
 Future main(List<String> args) async {
   var argParser = ArgParser()
     ..addFlag('raw', defaultsTo: false, help: 'dumps raw information')
@@ -33,7 +41,10 @@ Future main(List<String> args) async {
         help: 'vehicle state (software verion, name, doors, etc)')
     ..addFlag('show-all', defaultsTo: false, help: 'shows all settings')
     ..addFlag('help', abbr: 'h', help: 'prints this help')
-    ..addOption('access-token', abbr: 'a');
+    ..addOption('access-token', abbr: 'a')
+    ..addMultiOption('car',
+        help: 'index of the car to access; use "all" to print out each one',
+        defaultsTo: ['0']);
 
   var results = argParser.parse(args);
 
@@ -45,13 +56,13 @@ Future main(List<String> args) async {
     await stderr.flush();
     return;
   }
-  var raw = results['raw'];
-  var showOptions = results['show-options'];
-  var showCharge = results['show-charge'];
-  var showClimate = results['show-climate'];
-  var showDrive = results['show-drive'];
-  var showGui = results['show-gui'];
-  var showVehicle = results['show-vehicle'];
+  raw = results['raw'];
+  showOptions = results['show-options'];
+  showCharge = results['show-charge'];
+  showClimate = results['show-climate'];
+  showDrive = results['show-drive'];
+  showGui = results['show-gui'];
+  showVehicle = results['show-vehicle'];
   if (results['show-all']) {
     showOptions = true;
     showCharge = true;
@@ -67,8 +78,42 @@ Future main(List<String> args) async {
           : null);
 
   var vehicles = await Vehicle.getVehicles(fetcher);
-  var car = vehicles.first;
+  if (vehicles.length > 1 && !results.wasParsed('car')) {
+    print('Cars detected:');
+    int i = 0;
+    for (var car in vehicles) {
+      print('\t[${i++}] $car');
+    }
+    print('Use --car to select one, or "all"');
+  }
 
+  Iterable<String> resultCars = results['car'];
+  List<Vehicle> selectedVehicles;
+  if (resultCars.contains('all')) {
+    selectedVehicles = vehicles;
+  } else {
+    selectedVehicles = [];
+    for (String testIndex in resultCars) {
+      int index = int.tryParse(testIndex);
+      if (index == null) {
+        print('Error: --car expects an integer or "all". '
+            'Seen: $testIndex');
+        exit(1);
+      }
+      if (index < 0 || index >= vehicles.length) {
+        print('Error: Invalid index; expected range [0..${vehicles.length}). '
+            'Seen: $testIndex');
+        exit(1);
+      }
+      selectedVehicles.add(vehicles[index]);
+    }
+  }
+  for (var car in selectedVehicles) {
+    await handleVehicle(car);
+  }
+}
+
+Future<void> handleVehicle(Vehicle car) async {
   print("Waking car up...");
   var awake = await car.wakeUp();
   if (!awake) {
