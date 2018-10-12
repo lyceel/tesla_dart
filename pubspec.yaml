@@ -1,5 +1,5 @@
 name: tesla
-version: 0.2.1
+version: 0.2.2
 description: Proxy for accessing the Tesla Owners API.
 author: Jason Daly <lyceel@gmail.com>
 environment:

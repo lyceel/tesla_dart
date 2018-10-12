@@ -7,6 +7,7 @@ import 'src/charge_state.dart';
 import 'src/climate_state.dart';
 import 'src/drive_state.dart';
 import 'src/gui_settings.dart';
+import 'src/vehicle_config.dart';
 import 'src/vehicle_state.dart';
 
 class Vehicle {
@@ -19,6 +20,7 @@ class Vehicle {
   DriveState _driveState;
   GuiSettings _guiSettings;
   VehicleState _vehicleState;
+  VehicleConfig _vehicleConfig;
 
   Vehicle._(this.summary, this.fetcher, this._isMobileEnabled);
 
@@ -28,6 +30,7 @@ class Vehicle {
   DriveState get driveState => _driveState;
   GuiSettings get guiSettings => _guiSettings;
   VehicleState get vehicleState => _vehicleState;
+  VehicleConfig get vehicleConfig => _vehicleConfig;
 
   String toString() => summary.toString();
 
@@ -96,6 +99,13 @@ class Vehicle {
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.vehicleStatePath}');
     _vehicleState = VehicleState(response);
+  }
+
+  Future updateVehicleConfig() async {
+    var response =
+        await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
+            '${ApiFetcher.vehicleConfigPath}');
+    _vehicleConfig = VehicleConfig(response);
   }
 
   Future<bool> wakeUp() async {

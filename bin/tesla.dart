@@ -15,6 +15,7 @@ bool showClimate;
 bool showDrive;
 bool showGui;
 bool showVehicle;
+bool showConfig;
 
 Future main(List<String> args) async {
   var argParser = ArgParser()
@@ -38,7 +39,11 @@ Future main(List<String> args) async {
     ..addFlag('show-vehicle',
         abbr: 'v',
         defaultsTo: false,
-        help: 'vehicle state (software verion, name, doors, etc)')
+        help: 'vehicle state (software version, name, doors, etc)')
+    ..addFlag('show-config',
+        abbr: 'C',
+        defaultsTo: false,
+        help: 'vehicle configuration (color, drivetrain, badging, etc)')
     ..addFlag('show-all', defaultsTo: false, help: 'shows all settings')
     ..addFlag('help', abbr: 'h', help: 'prints this help')
     ..addOption('access-token', abbr: 'a')
@@ -63,6 +68,7 @@ Future main(List<String> args) async {
   showDrive = results['show-drive'];
   showGui = results['show-gui'];
   showVehicle = results['show-vehicle'];
+  showConfig = results['show-config'];
   if (results['show-all']) {
     showOptions = true;
     showCharge = true;
@@ -70,6 +76,7 @@ Future main(List<String> args) async {
     showDrive = true;
     showGui = true;
     showVehicle = true;
+    showConfig = true;
   }
 
   var fetcher = ApiFetcher(
@@ -176,5 +183,15 @@ Future<void> handleVehicle(Vehicle car) async {
           "${car.vehicleState.toJson().toString().replaceAll(", ", "\n    ")}");
     }
     print("${car.vehicleState}");
+  }
+
+  if (showConfig) {
+    await car.updateVehicleConfig();
+    print("Vehicle Config:");
+    if (raw) {
+      var json = car.vehicleConfig.toJson().toString();
+      print("\n  raw: ${json.replaceAll(", ", "\n    ")}");
+    }
+    print("${car.vehicleConfig}");
   }
 }

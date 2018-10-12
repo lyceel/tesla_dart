@@ -17,6 +17,7 @@ class ApiFetcher {
   static const String driveStatePath = 'data_request/drive_state';
   static const String guiSettingsPath = 'data_request/gui_settings';
   static const String vehicleStatePath = 'data_request/vehicle_state';
+  static const String vehicleConfigPath = 'data_request/vehicle_config';
 
   static const String wakeUpPath = 'command/wake_up';
 
