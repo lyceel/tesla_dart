@@ -3,30 +3,33 @@ class VehicleConfig {
 
   VehicleConfig(this._json);
 
-  bool get canAcceptNavRequests => _json['can_accept_navigation_requests'];
-  bool get canActuateTrunks => _json['can_actuate_trunks'];
+  bool get canAcceptNavRequests =>
+      _json['can_accept_navigation_requests'] ?? false;
+  bool get canActuateTrunks => _json['can_actuate_trunks'] ?? false;
+  String get carSpecialType => _json['car_special_type'] ?? "No";
   String get carType => _json['car_type'];
   String get chargePortType => _json['charge_port_type'];
   bool get euVehicle => _json['eu_vehicle'];
   String get exteriorColor => _json['exterior_color'];
-  bool get hasAirSuspension => _json['has_air_suspension'];
-  bool get hasLudicrousMode => _json['has_ludicrous_mode'];
-  bool get motorizedChargePort => _json['motorized_charge_port'];
-  String get performanceConfig => _json['perf_config'];
-  bool get powerLiftGate => _json['plg'];
-  int get rearSeatHeaters => _json['rear_seat_heaters'];
-  int get rearSeatType => _json['rear_seat_type'];
+  bool get hasAirSuspension => _json['has_air_suspension'] ?? false;
+  bool get hasLudicrousMode => _json['has_ludicrous_mode'] ?? false;
+  bool get motorizedChargePort => _json['motorized_charge_port'] ?? false;
+  String get performanceConfig => _json['perf_config'] ?? "Base";
+  bool get powerLiftGate => _json['plg'] ?? false;
+  int get rearSeatHeaters => _json['rear_seat_heaters'] ?? 0;
+  int get rearSeatType => _json['rear_seat_type'] ?? 0;
   bool get rightHandDrive => _json['rhd'];
   String get roofColor => _json['roof_color'];
-  int get seatType => _json['seat_type'];
+  int get seatType => _json['seat_type'] ?? 0;
   String get spoilerType => _json['spoiler_type'];
-  int get sunroofInstalled => _json['sun_roof_installed'];
+  int get sunroofInstalled => _json['sun_roof_installed'] ?? 0;
   String get thirdRowSeats => _json['third_row_seats'];
   String get trimBadging => _json['trim_badging'];
   String get wheelType => _json['wheel_type'];
   int get timestamp => _json['timestamp'];
 
   String toString() => "  Car Type: $carType\n"
+      "  Special Type: $carSpecialType\n"
       "  Trim Badging: ${trimBadging.toUpperCase()}\n"
       "  Exterior Color: $exteriorColor\n"
       "  Roof Color: $roofColor\n"
@@ -38,10 +41,15 @@ class VehicleConfig {
       "\n"
       "  Features:"
       "\n"
-      "    Seats:\n"
+      "    Seat Type:\n"
       "      Front:   $seatType\n"
       "      Rear:    $rearSeatType\n"
-      "      3rd Row: $thirdRowSeats\n"
+      "      3rd Row: "
+      "${thirdRowSeats == "<invalid>" ? "None" : thirdRowSeats}\n"
+      "\n"
+      "    Seat Heaters:\n"
+      "      Front: Yes\n"
+      "      Rear:  ${rearSeatHeaters > 0 ? "Yes" : "No"}\n"
       "\n"
       "    Sunroof:        ${sunroofInstalled != 0 ? "Yes" : "No"}\n"
       "    Wheels:         $wheelType\n"
