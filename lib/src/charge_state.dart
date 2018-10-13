@@ -79,8 +79,8 @@ class ChargeState {
 
     var middle = left +
         pen((fullBlock * fullBlocks) +
-        (fullBlocks < 10 ? partialBlocks[partialBlockIndex] : '') +
-        (fullBlocks < 10 ? ' ' * (10 - fullBlocks - 1) : '')) +
+            (fullBlocks < 10 ? partialBlocks[partialBlockIndex] : '') +
+            (fullBlocks < 10 ? ' ' * (10 - fullBlocks - 1) : '')) +
         right;
 
     return [top, middle, bottom];
@@ -97,9 +97,16 @@ class ChargeState {
     }
     buffer.writeln("  Range:           $batteryRange miles");
     var charging = chargingState == "Charging";
+    var supercharging =
+        charging && fastChargerPresent && (fastChargerType == 'Tesla');
     buffer.write("  Charge state:    ");
     if (charging) {
-      buffer.writeln("$chargingState to $chargeLimitSoc%");
+      if (supercharging) {
+        buffer.write("Supercharging");
+      } else {
+        buffer.write("Charging");
+      }
+      buffer.writeln(" to $chargeLimitSoc%");
     } else if (chargingState == null) {
       buffer.writeln("Disconnected");
     } else {
@@ -107,8 +114,12 @@ class ChargeState {
     }
     if (charging) {
       buffer.writeln("    Voltage:       $chargerVoltage V");
-      buffer.writeln("    Current:       "
-          "$chargerActualCurrent/$chargerPilotCurrent A");
+      buffer.write("    Current:       ");
+      if (supercharging) {
+        buffer.writeln("${(chargerPower * 1000) ~/ chargerVoltage} A");
+      } else {
+        buffer.writeln("$chargerActualCurrent/$chargerPilotCurrent A");
+      }
       buffer.writeln("    Power:         $chargerPower kW");
       buffer.writeln("    Rate:          $chargeRate mi/h");
     }
