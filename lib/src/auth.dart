@@ -65,7 +65,6 @@ class Auth {
     }
 
     // Check for imminent expiration.
-    print("Token expires at: ${auth.expires}");
     var fiveMinutes = const Duration(minutes: 5);
     var checkTime = DateTime.now().add(fiveMinutes);
     if (checkTime.isAfter(auth.expires)) {
@@ -104,7 +103,6 @@ class Auth {
   }
 
   Future refresh() async {
-    print("Refreshing credentials...");
     if (refreshToken == null) {
       print("Refresh token not found, unable to refresh credentials.");
       return null;

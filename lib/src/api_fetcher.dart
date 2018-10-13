@@ -10,6 +10,7 @@ class ApiFetcher {
   static const String apiUrl = 'https://owner-api.teslamotors.com';
 
   static const String authPath = 'oauth/token';
+  static const String allDataPath = 'data';
   static const String vehiclesPath = 'api/1/vehicles';
   static const String mobileEnabledPath = 'mobile_enabled';
   static const String chargeStatePath = 'data_request/charge_state';

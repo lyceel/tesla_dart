@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'src/api_fetcher.dart';
@@ -64,6 +65,13 @@ class Vehicle {
       }
     }
     return result;
+  }
+
+  Future dumpData() async {
+    var response =
+        await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
+            '${ApiFetcher.allDataPath}');
+    print('$response');
   }
 
   Future updateChargeState() async {

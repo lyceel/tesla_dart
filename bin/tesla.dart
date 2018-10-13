@@ -9,6 +9,7 @@ import 'package:tesla/src/auth.dart';
 import 'package:tesla/vehicle.dart';
 
 bool raw;
+bool dumpData;
 bool showOptions;
 bool showCharge;
 bool showClimate;
@@ -45,6 +46,9 @@ Future main(List<String> args) async {
         defaultsTo: false,
         help: 'vehicle configuration (color, drivetrain, badging, etc)')
     ..addFlag('show-all', defaultsTo: false, help: 'shows all settings')
+    ..addFlag('dump-data',
+        defaultsTo: false,
+        help: 'dumps all data about the vehicle (disables other output)')
     ..addFlag('help', abbr: 'h', help: 'prints this help')
     ..addOption('access-token', abbr: 'a')
     ..addMultiOption('car',
@@ -62,6 +66,7 @@ Future main(List<String> args) async {
     return;
   }
   raw = results['raw'];
+  dumpData = results['dump-data'];
   showOptions = results['show-options'];
   showCharge = results['show-charge'];
   showClimate = results['show-climate'];
@@ -121,6 +126,13 @@ Future main(List<String> args) async {
 }
 
 Future<void> handleVehicle(Vehicle car) async {
+  // If a data dump is requested, be sure to print nothing but that. This
+  // makes it easier to capture.
+  if (dumpData) {
+    await car.wakeUp();
+    await car.dumpData();
+    return;
+  }
   print("Waking car up...");
   var awake = await car.wakeUp();
   if (!awake) {
