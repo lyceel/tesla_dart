@@ -1,8 +1,13 @@
 name: tesla
-version: 0.1.0
+version: 0.2.2
 description: Proxy for accessing the Tesla Owners API.
 author: Jason Daly <lyceel@gmail.com>
+environment:
+    sdk: ">=2.1.0-dev.0.0 <3.0.0"
 dependencies:
-    ansicolor: any
-    args: any
-    http: any
+    ansicolor: ^1.0.2
+    args: ^1.4.3
+    async: ^2.0.7
+    collection: ^1.14.10
+    http: ^0.11.3+17
+    intl: ^0.15.6

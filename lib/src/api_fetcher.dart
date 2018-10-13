@@ -17,6 +17,7 @@ class ApiFetcher {
   static const String driveStatePath = 'data_request/drive_state';
   static const String guiSettingsPath = 'data_request/gui_settings';
   static const String vehicleStatePath = 'data_request/vehicle_state';
+  static const String vehicleConfigPath = 'data_request/vehicle_config';
 
   static const String wakeUpPath = 'command/wake_up';
 
@@ -33,7 +34,7 @@ class ApiFetcher {
     if (!isAuthenticated) {
       await _authenticate();
       if (!isAuthenticated) {
-        throw new StateError("Failed to load authentication credentials!");
+        throw StateError("Failed to load authentication credentials!");
       }
     }
   }
@@ -41,7 +42,7 @@ class ApiFetcher {
   Future _refreshAuth() async {
     _auth = await _auth.refresh();
     if (_auth == null) {
-      throw new StateError("Failed to refresh authentication credentials!");
+      throw StateError("Failed to refresh authentication credentials!");
     }
   }
 
@@ -55,7 +56,7 @@ class ApiFetcher {
     }
     if (response.statusCode == 408) throw 408;
     if (response.statusCode != 200) {
-      throw new StateError("Error during fetch: "
+      throw StateError("Error during fetch: "
           "(${response.statusCode}) ${response.reasonPhrase}");
     }
     var body = response.body;
@@ -67,7 +68,7 @@ class ApiFetcher {
 
   Future<Map<String, dynamic>> fetch(String url) async {
     var body = await _get(url);
-    var responseData = JSON.decode(body);
+    var responseData = json.decode(body);
     if (responseData is Map && responseData['response'] is Map) {
       return responseData['response'];
     }
@@ -77,9 +78,9 @@ class ApiFetcher {
   Future<List<Map<String, dynamic>>> fetchList(String url) async {
     var body = await _get(url);
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData['response'] is List) {
-        return responseData['response'];
+        return responseData['response'].cast<Map<String, dynamic>>();
       }
     }
     return <Map<String, dynamic>>[];
@@ -88,7 +89,7 @@ class ApiFetcher {
   Future<bool> fetchBoolean(String url) async {
     var body = await _get(url);
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData['response'] != null) {
         return responseData['response'];
       }
@@ -105,12 +106,12 @@ class ApiFetcher {
       return post(url);
     }
     if (response.statusCode != 200) {
-      throw new StateError("Error during post: "
+      throw StateError("Error during post: "
           "(${response.statusCode}) ${response.reasonPhrase}");
     }
     var body = response.body;
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map &&
           responseData['response'] != null &&
           responseData['response']['result'] != null) {
@@ -121,7 +122,7 @@ class ApiFetcher {
   }
 
   Future _authenticate() async {
-    var auth = await Auth.createFromCache(new File('.tesla_auth'));
+    var auth = await Auth.createFromCache();
     if (auth != null) {
       _auth = auth;
       return;

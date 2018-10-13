@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:tesla_dart/src/auth.dart';
+import 'package:tesla/src/auth.dart';
 
 Future main() async {
   var creds;
   try {
-    creds = (await new File(".config").readAsString()).split('\n');
+    creds = (await File(".config").readAsString()).split('\n');
   } on IOException catch (e) {
     print("Credentials not found: $e");
     return;
@@ -22,5 +22,5 @@ Future main() async {
   }
 
   // Cache the token.
-  await auth.writeToCache(new File('.tesla_auth'));
+  await auth.writeToCache();
 }

@@ -12,6 +12,8 @@ class Auth {
   static const String clientSecret =
       'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3';
 
+  static const String cacheFilename = '.tesla_auth';
+
   Map<String, dynamic> _json = {};
 
   Auth(this._json);
@@ -21,18 +23,19 @@ class Auth {
   String get refreshToken => _json['refresh_token'];
 
   DateTime get created => _json.containsKey('created_at')
-      ? new DateTime.fromMillisecondsSinceEpoch(_json['created_at'])
+      ? DateTime.fromMillisecondsSinceEpoch(_json['created_at'])
       : null;
 
   DateTime get expires =>
       _json.containsKey('created_at') && _json.containsKey('expires_in')
-          ? new DateTime.fromMillisecondsSinceEpoch(
+          ? DateTime.fromMillisecondsSinceEpoch(
               (_json['created_at'] + _json['expires_in']) * 1000)
           : null;
 
-  bool get isExpired => new DateTime.now().isAfter(expires);
+  bool get isExpired => DateTime.now().isAfter(expires);
 
-  static Future<Auth> createFromCache(File cacheFile) async {
+  static Future<Auth> createFromCache([File cacheFile]) async {
+    cacheFile ??= File(cacheFilename);
     if (!await cacheFile.exists()) {
       print("Authentication cache missing.");
       return null;
@@ -44,13 +47,13 @@ class Auth {
       return null;
     }
 
-    var json = JSON.decode(cache);
-    if (json == null || json.isEmpty) {
+    var jsonData = json.decode(cache);
+    if (jsonData == null || jsonData.isEmpty) {
       print("Authentication cache empty or corrupt.");
       return null;
     }
 
-    var auth = new Auth(json);
+    var auth = Auth(jsonData);
 
     // Validate the credentials, and return null if any are invalid.
     if (auth.accessToken == null ||
@@ -64,11 +67,12 @@ class Auth {
     // Check for imminent expiration.
     print("Token expires at: ${auth.expires}");
     var fiveMinutes = const Duration(minutes: 5);
-    var checkTime = new DateTime.now().add(fiveMinutes);
+    var checkTime = DateTime.now().add(fiveMinutes);
     if (checkTime.isAfter(auth.expires)) {
-      var refreshed = auth.refresh();
+      var refreshed = await auth.refresh();
       if (refreshed != null) {
         auth = refreshed;
+        return auth;
       }
       print("Failed to refresh stale credentials");
       return null;
@@ -90,9 +94,9 @@ class Auth {
     var body = response.body;
     var auth;
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
-        auth = new Auth(responseData);
+        auth = Auth(responseData);
       }
     }
 
@@ -100,7 +104,9 @@ class Auth {
   }
 
   Future refresh() async {
+    print("Refreshing credentials...");
     if (refreshToken == null) {
+      print("Refresh token not found, unable to refresh credentials.");
       return null;
     }
 
@@ -114,19 +120,26 @@ class Auth {
         .post('${ApiFetcher.apiUrl}/${ApiFetcher.authPath}', body: data);
     var body = response.body;
     if (response.statusCode != 200) {
+      print("  unexpected response from token refresh: ${response.statusCode} "
+          "$body");
       return null;
     }
     if (body != null && body.isNotEmpty) {
-      var responseData = JSON.decode(body);
+      var responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
+        // Update with the refreshed credentials.
         _json = responseData;
+
+        // Update the auth cache file for next time.
+        await writeToCache();
         return this;
       }
     }
     return null;
   }
 
-  Future writeToCache(File cacheFile) async {
-    return cacheFile.writeAsString(JSON.encode(_json));
+  Future writeToCache([File cacheFile]) async {
+    cacheFile ??= File(cacheFilename);
+    return cacheFile.writeAsString(json.encode(_json));
   }
 }

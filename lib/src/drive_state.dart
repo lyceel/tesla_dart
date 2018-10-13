@@ -4,15 +4,16 @@ class DriveState {
   DriveState(this._json);
 
   String get shiftState => _json['shift_state'];
-  double get speed => _json['speed'];
+  int get speed => _json['speed'];
   double get latitude => _json['latitude'];
   double get longitude => _json['longitude'];
   int get heading => _json['heading'];
   int get gpsAsOf => _json['gps_as_of'];
+  int get power => _json['power'];
 
   String get compassDirection {
     const interval = 22.5;
-    const directions = const <String>[
+    const directions = <String>[
       'N',
       'NNE',
       'NE',
@@ -49,11 +50,15 @@ class DriveState {
   String toString() =>
       "  Shift state: ${shiftState == null ? "Car Off" : shiftState}\n"
       "  Position:    $latitude, $longitude (as of "
-      "${new DateTime
-              .fromMillisecondsSinceEpoch(gpsAsOf * 1000, isUtc: true)
-              .toLocal()})\n"
+      "${_renderTimestamp(gpsAsOf * 1000)})\n"
       "  Heading:     $heading ($compassDirection)\n"
-      "  Speed:       ${speed == null ? 0 : speed}\n";
+      "  Speed:       ${speed == null ? 0 : speed}\n"
+      "  Power:       $power kW\n";
+
+  String _renderTimestamp(int timestamp) =>
+      DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)
+          .toLocal()
+          .toString();
 
   toJson() => _json;
 }

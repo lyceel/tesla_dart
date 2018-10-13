@@ -7,6 +7,7 @@ import 'src/charge_state.dart';
 import 'src/climate_state.dart';
 import 'src/drive_state.dart';
 import 'src/gui_settings.dart';
+import 'src/vehicle_config.dart';
 import 'src/vehicle_state.dart';
 
 class Vehicle {
@@ -19,6 +20,7 @@ class Vehicle {
   DriveState _driveState;
   GuiSettings _guiSettings;
   VehicleState _vehicleState;
+  VehicleConfig _vehicleConfig;
 
   Vehicle._(this.summary, this.fetcher, this._isMobileEnabled);
 
@@ -28,6 +30,7 @@ class Vehicle {
   DriveState get driveState => _driveState;
   GuiSettings get guiSettings => _guiSettings;
   VehicleState get vehicleState => _vehicleState;
+  VehicleConfig get vehicleConfig => _vehicleConfig;
 
   String toString() => summary.toString();
 
@@ -35,19 +38,19 @@ class Vehicle {
     var response = await fetcher.fetchList(ApiFetcher.vehiclesUrl);
     var result = <Vehicle>[];
     if (response != null) {
-      var rand = new Random();
-      Future<bool> _fetchMobileFor(String id) async {
+      var rand = Random();
+      Future<bool> _fetchMobileFor(int id) async {
         try {
-          var mobileEnabled = await fetcher
-              .fetchBoolean('${ApiFetcher.vehiclesUrl}/$id/'
+          var mobileEnabled =
+              await fetcher.fetchBoolean('${ApiFetcher.vehiclesUrl}/$id/'
                   '${ApiFetcher.mobileEnabledPath}');
           return mobileEnabled;
         } catch (e) {
           if (e is int && e == 408) {
             var time = rand.nextDouble() * 5000;
-            var delay = new Duration(milliseconds: time.toInt());
+            var delay = Duration(milliseconds: time.toInt());
             print("Timeout error fetching mobile-enabled; retry in $delay");
-            await new Future.delayed(delay);
+            await Future.delayed(delay);
             return _fetchMobileFor(id);
           }
           rethrow;
@@ -55,9 +58,9 @@ class Vehicle {
       }
 
       for (var vehicle in response) {
-        var summary = new VehicleSummary(vehicle);
+        var summary = VehicleSummary(vehicle);
         var mobileEnabled = await _fetchMobileFor(summary.id);
-        result.add(new Vehicle._(summary, fetcher, mobileEnabled));
+        result.add(Vehicle._(summary, fetcher, mobileEnabled));
       }
     }
     return result;
@@ -67,35 +70,42 @@ class Vehicle {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.chargeStatePath}');
-    _chargeState = new ChargeState(response, summary.batterySize);
+    _chargeState = ChargeState(response, summary.batterySize);
   }
 
   Future updateClimateState() async {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.climateStatePath}');
-    _climateState = new ClimateState(response);
+    _climateState = ClimateState(response);
   }
 
   Future updateDriveState() async {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.driveStatePath}');
-    _driveState = new DriveState(response);
+    _driveState = DriveState(response);
   }
 
   Future updateGuiSettings() async {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.guiSettingsPath}');
-    _guiSettings = new GuiSettings(response);
+    _guiSettings = GuiSettings(response);
   }
 
   Future updateVehicleState() async {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.vehicleStatePath}');
-    _vehicleState = new VehicleState(response);
+    _vehicleState = VehicleState(response);
+  }
+
+  Future updateVehicleConfig() async {
+    var response =
+        await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
+            '${ApiFetcher.vehicleConfigPath}');
+    _vehicleConfig = VehicleConfig(response);
   }
 
   Future<bool> wakeUp() async {
@@ -115,8 +125,8 @@ class VehicleSummary {
     _decodeBatterySize();
   }
 
-  String get id => _json['id'];
-  String get vehicleId => _json['vehicle_id'];
+  int get id => _json['id'];
+  int get vehicleId => _json['vehicle_id'];
   String get vin => _json['vin'];
   String get displayName => _json['display_name'];
   String get optionCodes => _json['option_codes'];
@@ -147,7 +157,7 @@ class VehicleSummary {
 
   void _decodeBatterySize() {
     const noBatterySize = 100000000;
-    const batterySizes = const <String, int>{
+    const batterySizes = <String, int>{
       'BR03': 60,
       'BR05': 75,
       'BT40': 40,
@@ -178,7 +188,7 @@ class VehicleSummary {
   String toString() => '$vehicleId: "$displayName" (VIN: $vin)';
 
   String optionsList() {
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
     buffer.writeln("Configuration:");
     for (var category in categoryNames.keys) {
       if (options.containsKey(category)) {
