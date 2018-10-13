@@ -78,9 +78,13 @@ class ChargeState {
 
   String toString() {
     var buffer = StringBuffer();
-    var batteryEnergy = (batteryLevel * batterySize) / 100.0;
-    buffer.writeln("  Battery:         $batteryEnergy/$batterySize.0 kWh "
-        "($batteryLevel%)");
+    if (batterySize > 0) {
+      var batteryEnergy = (batteryLevel * batterySize) / 100.0;
+      buffer.writeln("  Battery:         $batteryEnergy/$batterySize.0 kWh "
+          "($batteryLevel%)");
+    } else {
+      buffer.writeln("  Battery:         $batteryLevel%");
+    }
     var lines = renderBattery(batteryLevel);
     for (var line in lines) {
       buffer.writeln("                   $line");

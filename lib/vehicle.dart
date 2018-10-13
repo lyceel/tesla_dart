@@ -160,6 +160,7 @@ class VehicleSummary {
     const batterySizes = <String, int>{
       'BR03': 60,
       'BR05': 75,
+      'BT37': 75,
       'BT40': 40,
       'BT60': 60,
       'BT70': 70,
