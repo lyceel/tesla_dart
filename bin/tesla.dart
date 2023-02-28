@@ -8,15 +8,15 @@ import 'package:tesla/src/api_fetcher.dart';
 import 'package:tesla/src/auth.dart';
 import 'package:tesla/vehicle.dart';
 
-bool raw;
-bool dumpData;
-bool showOptions;
-bool showCharge;
-bool showClimate;
-bool showDrive;
-bool showGui;
-bool showVehicle;
-bool showConfig;
+bool raw = false;
+bool dumpData = false;
+bool showOptions = false;
+bool showCharge = false;
+bool showClimate = false;
+bool showDrive = false;
+bool showGui = false;
+bool showVehicle = false;
+bool showConfig = false;
 
 Future main(List<String> args) async {
   var argParser = ArgParser()
@@ -65,15 +65,15 @@ Future main(List<String> args) async {
     await stderr.flush();
     return;
   }
-  raw = results['raw'];
-  dumpData = results['dump-data'];
-  showOptions = results['show-options'];
-  showCharge = results['show-charge'];
-  showClimate = results['show-climate'];
-  showDrive = results['show-drive'];
-  showGui = results['show-gui'];
-  showVehicle = results['show-vehicle'];
-  showConfig = results['show-config'];
+  raw = results['raw'] ?? false;
+  dumpData = results['dump-data'] ?? false;
+  showOptions = results['show-options'] ?? false;
+  showCharge = results['show-charge'] ?? false;
+  showClimate = results['show-climate'] ?? false;
+  showDrive = results['show-drive'] ?? false;
+  showGui = results['show-gui'] ?? false;
+  showVehicle = results['show-vehicle'] ?? false;
+  showConfig = results['show-config'] ?? false;
   if (results['show-all']) {
     showOptions = true;
     showCharge = true;
@@ -106,7 +106,7 @@ Future main(List<String> args) async {
   } else {
     selectedVehicles = [];
     for (String testIndex in resultCars) {
-      int index = int.tryParse(testIndex);
+      int? index = int.tryParse(testIndex);
       if (index == null) {
         print('Error: --car expects an integer or "all". '
             'Seen: $testIndex');

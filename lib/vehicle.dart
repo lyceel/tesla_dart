@@ -16,12 +16,12 @@ class Vehicle {
   final ApiFetcher fetcher;
   bool _isMobileEnabled;
 
-  ChargeState _chargeState;
-  ClimateState _climateState;
-  DriveState _driveState;
-  GuiSettings _guiSettings;
-  VehicleState _vehicleState;
-  VehicleConfig _vehicleConfig;
+  late ChargeState _chargeState;
+  late ClimateState _climateState;
+  late DriveState _driveState;
+  late GuiSettings _guiSettings;
+  late VehicleState _vehicleState;
+  late VehicleConfig _vehicleConfig;
 
   Vehicle._(this.summary, this.fetcher, this._isMobileEnabled);
 
@@ -39,18 +39,18 @@ class Vehicle {
     var response = await fetcher.fetchList(ApiFetcher.vehiclesUrl);
     var result = <Vehicle>[];
     if (response != null) {
-      var rand = Random();
+      final rand = Random();
       Future<bool> _fetchMobileFor(int id) async {
         try {
-          var mobileEnabled =
+          final mobileEnabled =
               await fetcher.fetchBoolean('${ApiFetcher.vehiclesUrl}/$id/'
                   '${ApiFetcher.mobileEnabledPath}');
           return mobileEnabled;
         } catch (e) {
           if (e is int && e == 408) {
-            var time = rand.nextDouble() * 5000;
-            var delay = Duration(milliseconds: time.toInt());
-            print("Timeout error fetching mobile-enabled; retry in $delay");
+            final time = rand.nextDouble() * 5000;
+            final delay = Duration(milliseconds: time.toInt());
+            print('Timeout error fetching mobile-enabled; retry in $delay');
             await Future.delayed(delay);
             return _fetchMobileFor(id);
           }
@@ -59,15 +59,17 @@ class Vehicle {
       }
 
       for (var vehicle in response) {
-        var summary = VehicleSummary(vehicle);
-        var mobileEnabled = await _fetchMobileFor(summary.id);
-        result.add(Vehicle._(summary, fetcher, mobileEnabled));
+        final summary = VehicleSummary(vehicle);
+        if (summary.id != null) {
+          final mobileEnabled = await _fetchMobileFor(summary.id!);
+          result.add(Vehicle._(summary, fetcher, mobileEnabled));
+        }
       }
     }
     return result;
   }
 
-  Future dumpData() async {
+  Future<void> dumpData() async {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.allDataPath}');
@@ -78,7 +80,7 @@ class Vehicle {
     var response =
         await fetcher.fetch('${ApiFetcher.vehiclesUrl}/${summary.id}/'
             '${ApiFetcher.chargeStatePath}');
-    _chargeState = ChargeState(response, summary.batterySize);
+    _chargeState = ChargeState(response, summary.batterySize ?? 0);
   }
 
   Future updateClimateState() async {
@@ -133,32 +135,36 @@ class VehicleSummary {
     _decodeBatterySize();
   }
 
-  int get id => _json['id'];
-  int get vehicleId => _json['vehicle_id'];
-  String get vin => _json['vin'];
-  String get displayName => _json['display_name'];
-  String get optionCodes => _json['option_codes'];
-  String get color => _json['color'];
-  List<String> get tokens => _json['tokens'];
-  String get state => _json['state'];
-  bool get inService => _json['in_service'];
-  String get idS => _json['id_s'];
-  bool get remoteStartEnabled => _json['remote_start_enabled'];
-  bool get calendarEnabled => _json['calendar_enabled'];
-  String get backseatToken => _json['backseat_token'];
-  int get backseatTokenUpdatedAt => _json['backseat_token_updated_at'];
-  int get batterySize => _batterySize;
+  int? get id => _json['id'];
+  int? get vehicleId => _json['vehicle_id'];
+  String? get vin => _json['vin'];
+  String? get displayName => _json['display_name'];
+  String? get optionCodes => _json['option_codes'];
+  String? get color => _json['color'];
+  List<String>? get tokens => _json['tokens'];
+  String? get state => _json['state'];
+  bool? get inService => _json['in_service'];
+  String? get idS => _json['id_s'];
+  bool? get remoteStartEnabled => _json['remote_start_enabled'];
+  bool? get calendarEnabled => _json['calendar_enabled'];
+  String? get backseatToken => _json['backseat_token'];
+  int? get backseatTokenUpdatedAt => _json['backseat_token_updated_at'];
+  int? get batterySize => _batterySize;
 
   void _decodeOptions() {
-    var optionList = optionCodes.split(',');
+    final optionList = optionCodes?.split(',') ?? <String>[];
     for (var option in optionList) {
-      var optionValue = optionDecoder[option];
+      final optionValue = optionDecoder[option];
       if (optionValue != null) {
-        var category = optionValue['category'];
-        if (!options.containsKey(category)) {
-          options[category] = <String>[];
+        final category = optionValue['category'];
+        if (category != null) {
+          if (!options.containsKey(category)) {
+            options[category] = <String>[];
+          }
+          if (optionValue['name'] != null) {
+            options[category]!.add(optionValue['name']!);
+          }
         }
-        options[category].add(optionValue['name']);
       }
     }
   }
@@ -180,11 +186,11 @@ class VehicleSummary {
       'BTX8': 85,
     };
 
-    var size = noBatterySize;
-    var codes = optionCodes.split(',');
+    int size = noBatterySize;
+    final codes = optionCodes?.split(',') ?? <String>[];
     for (var code in codes) {
-      if (batterySizes.containsKey(code) && batterySizes[code] < size) {
-        size = batterySizes[code];
+      if (batterySizes.containsKey(code) && batterySizes[code]! < size) {
+        size = batterySizes[code]!;
       }
     }
     if (size < noBatterySize) {
@@ -198,14 +204,14 @@ class VehicleSummary {
 
   String optionsList() {
     var buffer = StringBuffer();
-    buffer.writeln("Configuration:");
+    buffer.writeln('Configuration:');
     for (var category in categoryNames.keys) {
       if (options.containsKey(category)) {
-        buffer.writeln("  ${categoryNames[category]}:");
-        for (var option in options[category]) {
-          buffer.writeln("    $option");
+        buffer.writeln('  ${categoryNames[category]}:');
+        for (var option in options[category]!) {
+          buffer.writeln('    $option');
         }
-        buffer.writeln("");
+        buffer.writeln('');
       }
     }
     return buffer.toString();

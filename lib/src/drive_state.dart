@@ -3,15 +3,17 @@ class DriveState {
 
   DriveState(this._json);
 
-  String get shiftState => _json['shift_state'];
-  int get speed => _json['speed'];
-  double get latitude => _json['latitude'];
-  double get longitude => _json['longitude'];
-  int get heading => _json['heading'];
-  int get gpsAsOf => _json['gps_as_of'];
-  int get power => _json['power'];
+  String? get shiftState => _json['shift_state'];
+  int? get speed => _json['speed'];
+  double? get latitude => _json['latitude'];
+  double? get longitude => _json['longitude'];
+  int? get heading => _json['heading'];
+  int? get gpsAsOf => _json['gps_as_of'];
+  int? get power => _json['power'];
 
   String get compassDirection {
+    if (heading == null) return 'UNKNOWN';
+
     const interval = 22.5;
     const directions = <String>[
       'N',
@@ -35,7 +37,7 @@ class DriveState {
     double left = 0.0;
     double right = left + interval / 2.0;
     for (var direction in directions) {
-      if (heading >= left && heading < right) {
+      if (heading! >= left && heading! < right) {
         return direction;
       }
       left = right;
@@ -48,12 +50,12 @@ class DriveState {
   }
 
   String toString() =>
-      "  Shift state: ${shiftState == null ? "Car Off" : shiftState}\n"
-      "  Position:    $latitude, $longitude (as of "
-      "${_renderTimestamp(gpsAsOf * 1000)})\n"
-      "  Heading:     $heading ($compassDirection)\n"
-      "  Speed:       ${speed == null ? 0 : speed}\n"
-      "  Power:       $power kW\n";
+      '  Shift state: ${shiftState == null ? 'Car Off' : shiftState}\n'
+      '  Position:    ${latitude ?? 0.0}, ${longitude ?? 0.0} (as of '
+      '${_renderTimestamp((gpsAsOf ?? 0) * 1000)})\n'
+      '  Heading:     $heading ($compassDirection)\n'
+      '  Speed:       ${speed ?? 0}\n'
+      '  Power:       ${power ?? 0} kW\n';
 
   String _renderTimestamp(int timestamp) =>
       DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true)

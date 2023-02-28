@@ -14,15 +14,15 @@ class Auth {
 
   static const String cacheFilename = '.tesla_auth';
 
-  Map<String, dynamic> _json = {};
+  Map<dynamic, dynamic> _json = {};
 
   Auth(this._json);
 
-  String get accessToken => _json['access_token'];
+  String? get accessToken => _json['access_token'];
 
-  String get refreshToken => _json['refresh_token'];
+  String? get refreshToken => _json['refresh_token'];
 
-  DateTime get created => _json.containsKey('created_at')
+  DateTime? get created => _json.containsKey('created_at')
       ? DateTime.fromMillisecondsSinceEpoch(_json['created_at'])
       : null;
 
@@ -30,26 +30,26 @@ class Auth {
       _json.containsKey('created_at') && _json.containsKey('expires_in')
           ? DateTime.fromMillisecondsSinceEpoch(
               (_json['created_at'] + _json['expires_in']) * 1000)
-          : null;
+          : DateTime(0);
 
   bool get isExpired => DateTime.now().isAfter(expires);
 
-  static Future<Auth> createFromCache([File cacheFile]) async {
+  static Future<Auth?> createFromCache([File? cacheFile]) async {
     cacheFile ??= File(cacheFilename);
     if (!await cacheFile.exists()) {
-      print("Authentication cache missing.");
+      print('Authentication cache missing.');
       return null;
     }
 
     var cache = await cacheFile.readAsString();
     if (cache == null) {
-      print("Authentication cache empty or corrupt.");
+      print('Authentication cache empty or corrupt.');
       return null;
     }
 
     var jsonData = json.decode(cache);
     if (jsonData == null || jsonData.isEmpty) {
-      print("Authentication cache empty or corrupt.");
+      print('Authentication cache empty or corrupt.');
       return null;
     }
 
@@ -60,7 +60,7 @@ class Auth {
         auth.refreshToken == null ||
         auth.created == null ||
         auth.expires == null) {
-      print("Authentication cache incomplete or invalid.");
+      print('Authentication cache incomplete or invalid.');
       return null;
     }
 
@@ -73,57 +73,60 @@ class Auth {
         auth = refreshed;
         return auth;
       }
-      print("Failed to refresh stale credentials");
+      print('Failed to refresh stale credentials');
       return null;
     }
 
     return auth;
   }
 
-  static Future<Auth> createFromCreds(String email, String password) async {
-    var data = {
-      "grant_type": "password",
-      "client_id": clientId,
-      "client_secret": clientSecret,
-      "email": email,
-      "password": password
+  static Future<Auth?> createFromCreds(String email, String password) async {
+    var data = <String, dynamic>{
+      'grant_type': 'password',
+      'client_id': clientId,
+      'client_secret': clientSecret,
+      'email': email,
+      'password': password
     };
-    var response = await http
-        .post('${ApiFetcher.apiUrl}/${ApiFetcher.authPath}', body: data);
+    final uri = Uri.parse('${ApiFetcher.apiUrl}/${ApiFetcher.authPath}');
+    var response = await http.post(uri, body: data);
     var body = response.body;
-    var auth;
+    Auth? auth;
     if (body != null && body.isNotEmpty) {
       var responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
         auth = Auth(responseData);
+      } else {
+        print('No access token returned from auth request!');
+        print('  response body: $body');
       }
     }
 
     return auth;
   }
 
-  Future refresh() async {
+  Future<Auth?> refresh() async {
     if (refreshToken == null) {
-      print("Refresh token not found, unable to refresh credentials.");
+      print('Refresh token not found, unable to refresh credentials.');
       return null;
     }
 
-    var data = {
-      "grant_type": "refresh_token",
-      "client_id": clientId,
-      "client_secret": clientSecret,
-      "refresh_token": refreshToken,
+    final data = <String, dynamic>{
+      'grant_type': 'refresh_token',
+      'client_id': clientId,
+      'client_secret': clientSecret,
+      'refresh_token': refreshToken,
     };
-    var response = await http
-        .post('${ApiFetcher.apiUrl}/${ApiFetcher.authPath}', body: data);
-    var body = response.body;
+    final uri = Uri.parse('${ApiFetcher.apiUrl}/${ApiFetcher.authPath}');
+    final response = await http.post(uri, body: data);
+    final body = response.body;
     if (response.statusCode != 200) {
-      print("  unexpected response from token refresh: ${response.statusCode} "
-          "$body");
+      print('  unexpected response from token refresh: ${response.statusCode} '
+          '$body');
       return null;
     }
     if (body != null && body.isNotEmpty) {
-      var responseData = json.decode(body);
+      final responseData = json.decode(body);
       if (responseData is Map && responseData.containsKey('access_token')) {
         // Update with the refreshed credentials.
         _json = responseData;
@@ -136,8 +139,8 @@ class Auth {
     return null;
   }
 
-  Future writeToCache([File cacheFile]) async {
+  Future<void> writeToCache([File? cacheFile]) async {
     cacheFile ??= File(cacheFilename);
-    return cacheFile.writeAsString(json.encode(_json));
+    await cacheFile.writeAsString(json.encode(_json));
   }
 }

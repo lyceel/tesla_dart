@@ -25,13 +25,13 @@ class ApiFetcher {
   static const String authUrl = '$apiUrl/authPath';
   static const String vehiclesUrl = '$apiUrl/$vehiclesPath';
 
-  Auth _auth;
+  Auth? _auth;
 
   bool get isAuthenticated => _auth != null;
 
-  ApiFetcher({Auth auth}) : _auth = auth;
+  ApiFetcher({Auth? auth}) : _auth = auth;
 
-  Future _checkAuth() async {
+  Future<void> _checkAuth() async {
     if (!isAuthenticated) {
       await _authenticate();
       if (!isAuthenticated) {
@@ -40,8 +40,8 @@ class ApiFetcher {
     }
   }
 
-  Future _refreshAuth() async {
-    _auth = await _auth.refresh();
+  Future<void> _refreshAuth() async {
+    _auth = await _auth!.refresh();
     if (_auth == null) {
       throw StateError("Failed to refresh authentication credentials!");
     }
@@ -49,8 +49,9 @@ class ApiFetcher {
 
   Future<String> _get(String url) async {
     await _checkAuth();
-    var response = await http
-        .get(url, headers: {'Authorization': 'Bearer ${_auth.accessToken}'});
+    final uri = Uri.parse(url);
+    final response = await http
+        .get(uri, headers: {'Authorization': 'Bearer ${_auth!.accessToken}'});
     if (response.statusCode == 401) {
       await _refreshAuth();
       return _get(url);
@@ -60,16 +61,16 @@ class ApiFetcher {
       throw StateError("Error during fetch: "
           "(${response.statusCode}) ${response.reasonPhrase}");
     }
-    var body = response.body;
+    final body = response.body;
     if (body != null && body.isNotEmpty) {
       return body;
     }
-    return "";
+    return '';
   }
 
   Future<Map<String, dynamic>> fetch(String url) async {
-    var body = await _get(url);
-    var responseData = json.decode(body);
+    final body = await _get(url);
+    final responseData = json.decode(body);
     if (responseData is Map && responseData['response'] is Map) {
       return responseData['response'];
     }
@@ -77,9 +78,9 @@ class ApiFetcher {
   }
 
   Future<List<Map<String, dynamic>>> fetchList(String url) async {
-    var body = await _get(url);
+    final body = await _get(url);
     if (body != null && body.isNotEmpty) {
-      var responseData = json.decode(body);
+      final responseData = json.decode(body);
       if (responseData is Map && responseData['response'] is List) {
         return responseData['response'].cast<Map<String, dynamic>>();
       }
@@ -88,9 +89,9 @@ class ApiFetcher {
   }
 
   Future<bool> fetchBoolean(String url) async {
-    var body = await _get(url);
+    final body = await _get(url);
     if (body != null && body.isNotEmpty) {
-      var responseData = json.decode(body);
+      final responseData = json.decode(body);
       if (responseData is Map && responseData['response'] != null) {
         return responseData['response'];
       }
@@ -100,8 +101,9 @@ class ApiFetcher {
 
   Future<bool> post(String url) async {
     await _checkAuth();
-    var response = await http
-        .post(url, headers: {'Authorization': 'Bearer ${_auth.accessToken}'});
+    final uri = Uri.parse(url);
+    final response = await http
+        .post(uri, headers: {'Authorization': 'Bearer ${_auth!.accessToken}'});
     if (response.statusCode == 401) {
       await _refreshAuth();
       return post(url);
@@ -110,9 +112,9 @@ class ApiFetcher {
       throw StateError("Error during post: "
           "(${response.statusCode}) ${response.reasonPhrase}");
     }
-    var body = response.body;
+    final body = response.body;
     if (body != null && body.isNotEmpty) {
-      var responseData = json.decode(body);
+      final responseData = json.decode(body);
       if (responseData is Map &&
           responseData['response'] != null &&
           responseData['response']['result'] != null) {
@@ -122,8 +124,8 @@ class ApiFetcher {
     return false;
   }
 
-  Future _authenticate() async {
-    var auth = await Auth.createFromCache();
+  Future<void> _authenticate() async {
+    final auth = await Auth.createFromCache();
     if (auth != null) {
       _auth = auth;
       return;
